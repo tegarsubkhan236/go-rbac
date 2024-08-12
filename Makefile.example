@@ -1,0 +1,22 @@
+DATABASE="mysql://user:pass@tcp(host:port)/db_name?multiStatements=true"
+MIGRATION_PATH=internal/pkg/database/
+
+help: ## Displays the help for each command.
+	@grep -E '^[a-zA-Z_-]+:.*## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+run: ## Run the application.
+	@go run cmd/*.go
+
+dbup: ## Migrates the database to the latest version.
+	@migrate -database $(DATABASE) -path $(MIGRATION_PATH) -verbose up
+
+dbdown: ## Migrates the database down by first version.
+	@migrate -database=$(DATABASE) -path=$(MIGRATION_PATH) -verbose down
+
+dbdrop: ## Drops the database.
+	@migrate -database=$(DATABASE) -path=$(MIGRATION_PATH) -verbose drop -f
+
+dbseq: ## Creates a new migration file with the given name. ex: name=create_users_table
+	@migrate create -ext sql -dir $(MIGRATION_PATH) $(name)
+
+dbreset: dbdrop dbup ## Reset database to the latest version.
