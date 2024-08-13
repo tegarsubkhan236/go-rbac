@@ -8,10 +8,10 @@
   },
   "database": {
     "username": "root",
-    "password": "whiplash",
+    "password": "",
     "host": "localhost",
     "port": 3306,
-    "name": "testos_db",
+    "name": "go_rbac_db",
     "pool": {
       "idle": 10,
       "max": 100,
