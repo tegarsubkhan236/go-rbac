@@ -1,30 +1,30 @@
 package cr_permission
 
-import "github.com/tegarsubkhan236/redis-jwt-auth/internal/pkg/model"
+import "github.com/tegarsubkhan236/go-rbac/internal/pkg/model"
 
-type CrPermissionUseCase interface {
-	FetchAllPermission() ([]*model.CrPermission, error)
+type UseCase interface {
+	FetchAllPermission(limit, page int) ([]*model.CrPermission, error)
 	FetchPermissionByID(id uint) (*model.CrPermission, error)
 	CreatePermission(data *model.CrPermission) error
 	UpdatePermission(id uint, data *model.CrPermission) error
 	DeletePermission(id uint) error
 }
 
-type crPermissionUseCase struct {
-	repo CrPermissionRepository
+type useCase struct {
+	repo Repository
 }
 
-func NewCrPermissionUseCase(repo CrPermissionRepository) CrPermissionUseCase {
-	return &crPermissionUseCase{
+func NewUseCase(repo Repository) UseCase {
+	return &useCase{
 		repo: repo,
 	}
 }
 
-func (c *crPermissionUseCase) FetchAllPermission() ([]*model.CrPermission, error) {
+func (c *useCase) FetchAllPermission(limit, page int) ([]*model.CrPermission, error) {
 	return c.repo.FindAll()
 }
 
-func (c *crPermissionUseCase) FetchPermissionByID(id uint) (*model.CrPermission, error) {
+func (c *useCase) FetchPermissionByID(id uint) (*model.CrPermission, error) {
 	result, err := c.repo.FindByID(id)
 	if err != nil {
 		return nil, err
@@ -33,11 +33,11 @@ func (c *crPermissionUseCase) FetchPermissionByID(id uint) (*model.CrPermission,
 	return result.ToResponse(), err
 }
 
-func (c *crPermissionUseCase) CreatePermission(data *model.CrPermission) error {
+func (c *useCase) CreatePermission(data *model.CrPermission) error {
 	return c.repo.Create(data)
 }
 
-func (c *crPermissionUseCase) UpdatePermission(id uint, data *model.CrPermission) error {
+func (c *useCase) UpdatePermission(id uint, data *model.CrPermission) error {
 	result, err := c.repo.FindByID(id)
 	if err != nil {
 		return err
@@ -50,6 +50,6 @@ func (c *crPermissionUseCase) UpdatePermission(id uint, data *model.CrPermission
 	return c.repo.Update(data)
 }
 
-func (c *crPermissionUseCase) DeletePermission(id uint) error {
+func (c *useCase) DeletePermission(id uint) error {
 	return c.repo.Delete(&model.CrPermission{ID: id})
 }

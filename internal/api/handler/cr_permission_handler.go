@@ -2,61 +2,71 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/tegarsubkhan236/redis-jwt-auth/internal/pkg/service/cr_permission"
-	"github.com/tegarsubkhan236/redis-jwt-auth/internal/util"
+	"github.com/tegarsubkhan236/go-rbac/internal/pkg/service/cr_permission"
 )
 
-func HandleFetchAllPermission(usecase cr_permission.CrPermissionUseCase) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		result, err := usecase.FetchAllPermission()
-		if err != nil {
-			return util.ResponseInternalServerError(c, err.Error())
-		}
+type CrPermissionHandler interface {
+	HandleFetchAllPermission(c *fiber.Ctx) error
+	HandleFetchByIdPermission(c *fiber.Ctx) error
+	HandleInsertPermission(c *fiber.Ctx) error
+	HandleUpdatePermission(c *fiber.Ctx) error
+	HandleDeletePermission(c *fiber.Ctx) error
+}
 
-		return util.ResponseOKWithPages(c, 0, 0, 0, result)
+type crPermissionHandler struct {
+	usecase cr_permission.UseCase
+}
+
+func NewCrPermissionHandler(usecase cr_permission.UseCase) CrPermissionHandler {
+	return &crPermissionHandler{
+		usecase: usecase,
 	}
 }
 
-func HandleFetchByIdPermission(usecase cr_permission.CrPermissionUseCase) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		result, err := usecase.FetchPermissionByID(1)
-		if err != nil {
-			return util.ResponseInternalServerError(c, err.Error())
-		}
+func (r *crPermissionHandler) HandleFetchAllPermission(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit")
+	page := c.QueryInt("page")
 
-		return util.ResponseOK(c, result)
+	result, err := r.usecase.FetchAllPermission(limit, page)
+	if err != nil {
+		return ResponseInternalServerError(c, err.Error())
 	}
+
+	return ResponseOKWithPages(c, 0, 0, 0, result)
 }
 
-func HandleInsertPermission(usecase cr_permission.CrPermissionUseCase) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		result, err := usecase.FetchPermissionByID(1)
-		if err != nil {
-			return util.ResponseInternalServerError(c, err.Error())
-		}
-
-		return util.ResponseCreated(c, result)
+func (r *crPermissionHandler) HandleFetchByIdPermission(c *fiber.Ctx) error {
+	result, err := r.usecase.FetchPermissionByID(1)
+	if err != nil {
+		return ResponseInternalServerError(c, err.Error())
 	}
+
+	return ResponseOK(c, result)
 }
 
-func HandleUpdatePermission(usecase cr_permission.CrPermissionUseCase) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		result, err := usecase.FetchPermissionByID(1)
-		if err != nil {
-			return util.ResponseInternalServerError(c, err.Error())
-		}
-
-		return util.ResponseOK(c, result)
+func (r *crPermissionHandler) HandleInsertPermission(c *fiber.Ctx) error {
+	result, err := r.usecase.FetchPermissionByID(1)
+	if err != nil {
+		return ResponseInternalServerError(c, err.Error())
 	}
+
+	return ResponseCreated(c, result)
 }
 
-func HandleDeletePermission(usecase cr_permission.CrPermissionUseCase) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		result, err := usecase.FetchPermissionByID(1)
-		if err != nil {
-			return util.ResponseInternalServerError(c, err.Error())
-		}
-
-		return util.ResponseOK(c, result)
+func (r *crPermissionHandler) HandleUpdatePermission(c *fiber.Ctx) error {
+	result, err := r.usecase.FetchPermissionByID(1)
+	if err != nil {
+		return ResponseInternalServerError(c, err.Error())
 	}
+
+	return ResponseOK(c, result)
+}
+
+func (r *crPermissionHandler) HandleDeletePermission(c *fiber.Ctx) error {
+	result, err := r.usecase.FetchPermissionByID(1)
+	if err != nil {
+		return ResponseInternalServerError(c, err.Error())
+	}
+
+	return ResponseOK(c, result)
 }

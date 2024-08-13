@@ -1,9 +1,9 @@
-package cr_permission
+package test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/tegarsubkhan236/redis-jwt-auth/internal/pkg/model"
-	"github.com/tegarsubkhan236/redis-jwt-auth/internal/util"
+	"github.com/tegarsubkhan236/go-rbac/internal/pkg/model"
+	"github.com/tegarsubkhan236/go-rbac/internal/pkg/service/cr_permission"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"testing"
@@ -17,8 +17,8 @@ func TestCrPermissionRepository(t *testing.T) {
 	assert.Nil(t, err, "failed to migrate database")
 
 	t.Run("Create CrPermission", func(t *testing.T) {
-		util.RunInTransaction(t, db, func(tx *gorm.DB) {
-			repo := NewCrPermissionRepository(tx)
+		RunInTransaction(t, db, func(tx *gorm.DB) {
+			repo := cr_permission.NewRepository(tx)
 			data := &model.CrPermission{
 				Name: "admin",
 			}
@@ -29,8 +29,8 @@ func TestCrPermissionRepository(t *testing.T) {
 	})
 
 	t.Run("Fetch All CrPermissions", func(t *testing.T) {
-		util.RunInTransaction(t, db, func(tx *gorm.DB) {
-			repo := NewCrPermissionRepository(tx)
+		RunInTransaction(t, db, func(tx *gorm.DB) {
+			repo := cr_permission.NewRepository(tx)
 			data1 := &model.CrPermission{Name: "admin"}
 			data2 := &model.CrPermission{Name: "user"}
 			err := repo.Create(data1)
@@ -45,8 +45,8 @@ func TestCrPermissionRepository(t *testing.T) {
 	})
 
 	t.Run("Find CrPermission By ID", func(t *testing.T) {
-		util.RunInTransaction(t, db, func(tx *gorm.DB) {
-			repo := NewCrPermissionRepository(tx)
+		RunInTransaction(t, db, func(tx *gorm.DB) {
+			repo := cr_permission.NewRepository(tx)
 			data := &model.CrPermission{
 				Name: "admin",
 			}
@@ -60,8 +60,8 @@ func TestCrPermissionRepository(t *testing.T) {
 	})
 
 	t.Run("Update CrPermission", func(t *testing.T) {
-		util.RunInTransaction(t, db, func(tx *gorm.DB) {
-			repo := NewCrPermissionRepository(tx)
+		RunInTransaction(t, db, func(tx *gorm.DB) {
+			repo := cr_permission.NewRepository(tx)
 			data := &model.CrPermission{
 				Name: "admin",
 			}
@@ -82,8 +82,8 @@ func TestCrPermissionRepository(t *testing.T) {
 	})
 
 	t.Run("Delete CrPermission", func(t *testing.T) {
-		util.RunInTransaction(t, db, func(tx *gorm.DB) {
-			repo := NewCrPermissionRepository(tx)
+		RunInTransaction(t, db, func(tx *gorm.DB) {
+			repo := cr_permission.NewRepository(tx)
 			data := &model.CrPermission{
 				Name: "admin",
 			}

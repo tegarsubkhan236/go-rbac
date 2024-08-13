@@ -2,34 +2,33 @@ package main
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/tegarsubkhan236/redis-jwt-auth/internal/pkg/config"
+	"github.com/tegarsubkhan236/go-rbac/config"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
 func main() {
-	config.NewRedis()
-	defer func() {
-		if err := config.CloseRedis(); err != nil {
-			log.Printf("Error closing Redis: %v", err)
-		}
-	}()
+	viperConfig := config.NewViper()
+	db := config.NewDatabase(viperConfig)
+	redis := config.NewRedis(viperConfig)
+	app := config.NewFiber(viperConfig)
+	validator := config.NewValidator(viperConfig)
 
-	app := fiber.New(fiber.Config{
-		IdleTimeout: 5 * time.Second,
-	})
-
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello world!")
+	config.Bootstrap(&config.BootstrapConfig{
+		Config:    viperConfig,
+		DB:        db,
+		Redis:     redis,
+		App:       app,
+		Validator: validator,
 	})
 
 	go func() {
-		if err := app.Listen(":3000"); err != nil {
-			log.Panic(err)
+		webPort := viperConfig.GetInt("web.port")
+		err := app.Listen(fmt.Sprintf(":%d", webPort))
+		if err != nil {
+			log.Fatalf("Failed to start server: %v", err)
 		}
 	}()
 

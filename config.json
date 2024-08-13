@@ -1,0 +1,27 @@
+{
+  "app": {
+    "name": "go-rbac"
+  },
+  "web": {
+    "prefork": false,
+    "port": 3000
+  },
+  "database": {
+    "username": "root",
+    "password": "whiplash",
+    "host": "localhost",
+    "port": 3306,
+    "name": "testos_db",
+    "pool": {
+      "idle": 10,
+      "max": 100,
+      "lifetime": 300
+    }
+  },
+  "redis": {
+    "username": "",
+    "password": "",
+    "host": "127.0.0.1",
+    "port": 6379
+  }
+}
